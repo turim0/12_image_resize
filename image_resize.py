@@ -16,7 +16,7 @@ def create_parser():
 
 def validate_params(width, height, scale):
     if (width or height) and scale is not None:
-        sys.exit('Variable scale is not compatible with height and weight')
+        return None
 
 
 def scale_process(width, height, scale, initial_width, initial_height):
@@ -51,7 +51,7 @@ def resize_image(image, width, height):
 
 
 def warning(width, height, initial_width, initial_height):
-    if round((width/initial_width),2) != round((height/initial_height),2):
+    if round((width/initial_width), 2) != round((height/initial_height), 2):
         print('Warning: the picture may be disproportionate')
 
 
@@ -74,7 +74,8 @@ if __name__ == '__main__':
     height = namespace.height
     scale = namespace.scale
     output = namespace.output
-    validate_params(width, height, scale)
+    if validate_params(width, height, scale) is None:
+        sys.exit('Variable scale is not compatible with height and weight')
     try:
         image = Image.open(path_to_original)
     except IOError as err:
