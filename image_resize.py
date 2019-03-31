@@ -51,7 +51,7 @@ def resize_image(image, width, height):
 
 
 def warning(width, height, initial_width, initial_height):
-    if round((width/initial_width),2) != round((height/initial_height),2):
+    if round((width/initial_width), 2) != round((height/initial_height), 2):
         print('Warning: the picture may be disproportionate')
 
 
