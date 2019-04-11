@@ -15,6 +15,12 @@ def create_parser():
 
 
 def validate_params(width, height, scale):
+    if width is not None:
+        return width > 0
+    if height is not None:
+        return height > 0
+    if scale is not None:
+        return scale > 0
     return bool(width or height) is not bool(scale)
 
 
@@ -36,12 +42,12 @@ def process_params(width, height, scale, initial_width, initial_height):
 
 
 def name_resized_image(width, height, path_to_original):
-    size_info = '__{width}x{height}'.format(width=str(width),height=str(height))
+    size_info = '__{width}x{height}'.format(width=str(width), height=str(height))
     filename = os.path.basename(path_to_original)
     image_name, ext = os.path.splitext(filename)
     resized_image_name = '{name}{size}{ext}'.format(
         name=image_name,
-        size=size_info, 
+        size=size_info,
         ext=ext
     )
     return resized_image_name
@@ -52,15 +58,17 @@ def resize_image(image, width, height):
     return resized_image
 
 
-def display_warning(width, height, initial_width, initial_height):
-    if round((width/initial_width), 2) != round((height/initial_height), 2):
-        print('Warning: the picture may be disproportionate')
+def is_image_ratio_preserve(width, height, initial_width, initial_height):
+    if round((width / initial_width), 2) != round((height / initial_height), 2):
+        return False
+    else:
+        return True
 
 
-def save_image(image, output, resized_image_name):
-    output_path = '{output}/{name}'.format(output=output, name=resized_image_name)
+def save_image(output, resized_image_name, image):
+    output_path = os.path.join(output, resized_image_name)
     try:
-            image.save(output_path)
+        image.save(output_path)
     except (ValueError, IOError):
         return False
 
@@ -74,7 +82,7 @@ if __name__ == '__main__':
     scale = args.scale
     output = args.output
     if validate_params(width, height, scale) is False:
-        sys.exit('Invalid parameters')
+        parser.error('Invalid parameters')
     try:
         image = Image.open(path_to_original)
     except IOError as err:
@@ -82,15 +90,9 @@ if __name__ == '__main__':
     initial_width, initial_height = image.size
     width, height = process_params(width, height, scale, initial_width, initial_height)
     resized_image = resize_image(image, width, height)
-    display_warning(width, height, initial_width, initial_height)
+    if is_image_ratio_preserve(width, height, initial_width, initial_height) is False:
+        print('Warning: the picture may be disproportionate')
     resized_image_name = name_resized_image(width, height, path_to_original)
-    saving = save_image(resized_image, output, resized_image_name)
+    saving = save_image(output, resized_image_name, resized_image)
     if saving is False:
         print('File saving error')
-
-
-
-
-
-
-
