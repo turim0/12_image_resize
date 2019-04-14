@@ -15,12 +15,9 @@ def create_parser():
 
 
 def validate_params(width, height, scale):
-    if width is not None and width <= 0:
-        return False
-    if height is not None and height <= 0:
-        return False
-    if scale is not None and scale <= 0:
-        return False
+    for param in [width, height, scale]:
+        if param is not None and param <= 0:
+            return False
     return bool(width or height) is not bool(scale)
 
 
@@ -82,6 +79,7 @@ if __name__ == '__main__':
     if validate_params(width, height, scale) is False:
         parser.error('Invalid parameters')
     try:
+
         image = Image.open(path_to_original)
     except IOError as err:
         sys.exit(err)
