@@ -15,12 +15,12 @@ def create_parser():
 
 
 def validate_params(width, height, scale):
-    if width is not None:
-        return width > 0
-    if height is not None:
-        return height > 0
-    if scale is not None:
-        return scale > 0
+    if width is not None and width <= 0:
+        return False
+    if height is not None and height <= 0:
+        return False
+    if scale is not None and scale <= 0:
+        return False
     return bool(width or height) is not bool(scale)
 
 
@@ -61,8 +61,6 @@ def resize_image(image, width, height):
 def is_image_ratio_preserve(width, height, initial_width, initial_height):
     if round((width / initial_width), 2) != round((height / initial_height), 2):
         return False
-    else:
-        return True
 
 
 def save_image(output, resized_image_name, image):
